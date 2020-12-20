@@ -1,168 +1,112 @@
 import g4p_controls.*;
+import java.util.Random;
 
-ArrayList<PVector> path; //pvector objects are 2d vectors
-ArrayList<PVector> path2; //pvector objects are 2d vectors
+// the below lines initialize data structures to store each point in the path
+ArrayList<PVector> path;
+ArrayList<ArrayList<PVector>> paths;
 
-boolean paused = false; //used to pause and start drawing
+//used to pause and stop drawing
+boolean paused = false;
+boolean stop = false;
 
 //initialize amount of each color
-int redAmount = 0;
-int greenAmount = 50;
+int redAmount = 255;
+int greenAmount = 0;
 int blueAmount = 50;
+//initialize our outer, current, and end circles
+Circle outer;
+Circle end;
+Circle current;
 
-float r = 100; //radius
-float angle = 0;
+//initialzie random object
+Random rand;
 
-//number of circles in spirograph and number of layers in each one
-int numCircles = 1;
-int numLayers = 10;
-
-//initialize our start and end circles
-Orbit sun;
-Orbit end;
-
-//controls whether we want to stop the drawing
-boolean stop = false;
-boolean drawing = true;
-//screen size
-void settings() {
-  size(600, 600);
-}
-
-//setup for the screen
+/* 
+Called once automatically when the program starts. Cannot be called again. 
+Sets the background, initializes global vars, and creates our first spirograph
+in the middle of the page!
+*/
 void setup() {
+  size(600, 600);
+  noFill();
+  rand = new Random();
+  createGUI();
   
-  //add second window for control of elements
-  screen = GWindow.getWindow(this, "Control Panel", 300,300,500,200,P2D);
-  screen.addDrawHandler(this, "windowDraw");
-  
-  //simple buttons
-  increaseCircles = new GButton(screen, 0,0,150, 30,"Click me to increase the number of circles");
-  increaseLayers = new GButton(screen, 150,0,150,30, "Click me to increase the number of layers");
-  increaseSpeed = new GButton(screen, 300,0,150,30, "Click me to increase the speed");
-  decreaseCircles = new GButton(screen, 0,30,150,30, "Click me to decrease the number of circles");
-  decreaseLayers = new GButton(screen, 150,30,150,30, "Click me to decrease the number of layers");
-  decreaseSpeed = new GButton(screen, 300,30,150,30, "Click me to decrease the speed");
-  
-  //a slider for each primary color
-  implementSliders(red, 4.0, 100,100, redAmount);
-  implementSliders(green, 5.0, 200,100, greenAmount);
-  implementSliders(blue, 6.0, 300,100, blueAmount);
-  
-  //initialize our path vector
+  //initialize our path vector lists
   path = new ArrayList<PVector>();
-  //create our first spirograph!
-  startMoving(305,305);
+  paths = new ArrayList<ArrayList<PVector>>();
+  
+  //add first path to list and create first spirograph!
+  paths.add(path);
+  createCircle(305,305,100);
 }
 
-//runs for the duration of the program, draws the spirals
+/*
+Runs continuously for the duration of the program.
+We show the spirograph itself as well as the path.
+*/
 void draw(){
-  background(51);
+  background(30, 30, 30);
   noFill();
-  Orbit current = sun;
+  Circle current = outer;
+  //show the circles until current is null (indicating its the outer most circle)
   while (current != null) {
     if (stop == false) {
-      current.update();
+      current.updateCircle();
       current.show();
     }
-    current = current.child;
-    if (stop == true) {
-      break;
-    }
+    current = current.child; //reassign current to next circle
   }
-   drawPath(path);
+  drawPath(path); //draw the path of the orbit! 
 }
 
-void mouseReleased() {
-    end.x = mouseX;
-    end.y = mouseY;
-    path2 = new ArrayList<PVector>();
-    startMoving(mouseX, mouseY);
-    drawPath2(path2);
-}
-
-//start the spirograph
-void startMoving(int xCoord, int yCoord) {
-  //center circle
-  sun = new Orbit(xCoord, yCoord,100, 1);
-  //update current so we have more and more children
-  Orbit current = sun;
+/*
+Creates the next spirograph on the page! The outermost circle is named outer, and 
+all of the circles spiraling in it are called children. This method creates the specified
+number of child circles. Each circle is a Spirograph Object.
+@params:
+    xCoord --> x coordinate of the outer circle to be made
+    yCoord -> y coordinate of the outer circle to be made
+    radius --> the radius of the outer circle to be made
+*/
+void createCircle(float xCoord, float yCoord, float radius) {
+  //create outer-most circle
+  outer = new Circle(xCoord, yCoord,radius, 1);
+  //create the specified number of children; update current circle
+  Circle current = outer;
   for (int i = 0; i < numCircles; i++) {
-    current = current.addChild();
+    current = current.addChild(); //add a child circle
   }
-   end = current;
-   loop();
+  end = current; //set end to the last circle (this is where the path is drawn from)
 }
 
-//initialize our control panel window
-public void windowDraw(PApplet app, GWinData data) {
-  app.background(0);
-  app.fill(255);
-}
+/* 
+Here we actually track the location vectors to draw the spiral. Note that draw() calls this method,
+so this is  also called continuously. Note that the outer Circle of each spirograph has continuously moving
+x,y parameters as all the circles rotate. We want to trace this like in a real spirograph on paper.
+To do this, we continuously add all of the coordinates as PVector objects to a list and then draw all
+of them. IF the drawing is stopped we don't keep adding to the path.
 
-//where we actually track the location vectors to draw the spiral
+@params:
+  path --> current array list of PVector vertices
+*/
 void drawPath(ArrayList<PVector> path) {
-  if (drawing) {
+  //if the drawing is not stopped, add the points as the circles rotate.
+  if (!stop) {
     path.add(new PVector(end.x,end.y)); //add the vectors to path
   }
-  //draw each layer
-  for (int i = 0; i < numLayers; i+=1) {
-  // draw new outline
-    beginShape();
-    if (drawing) {
-      stroke(redAmount+(i*5),greenAmount+(i*5),blueAmount+(i*5), log(i)*100); 
-    } else {
-      stroke(0,0,0); }
-    for (PVector pos : path) {
-      vertex(pos.x+(0.5*i), pos.y+(0.5*i));
-    }
-    
-    endShape();
-  }
-  
-}
-
-void drawPath2(ArrayList<PVector> path) {
-  path.add(new PVector(end.x,end.y)); //add the vectors to path
-  
-  //draw each layer
-  for (int i = 0; i < numLayers; i+=1) {
-  // draw new outline
-    beginShape();
-    stroke(redAmount+(i*5),greenAmount+(i*5),blueAmount+(i*5), log(i)*100); 
-    for (PVector pos : path) {
-      vertex(pos.x+(0.5*i), pos.y+(0.5*i));
+  //draw each spirograph
+  for (ArrayList<PVector> currentpath : paths) {
+    for (int i = 0; i < numLayers; i+=1) {
+      // draw new outline
+      beginShape();
+      //update colors to create a rainbow affect the user can manipulate
+      stroke(redAmount-(i*12),greenAmount+(i*5),blueAmount+(i*5),200-(i*2)); 
+      //draw each vertex in the list
+      for (PVector pos : currentpath) {
+        vertex(pos.x+(0.5*i), pos.y+(0.5*i));
       }
-    
     endShape();
+   }
   }
-  
 }
-
-///variables for buttons and sliders
-GButton increaseCircles;
-GButton increaseLayers;
-GButton increaseSpeed;
-GButton decreaseCircles;
-GButton decreaseLayers;
-GButton decreaseSpeed;
-
-GCustomSlider red;
-GCustomSlider green;
-GCustomSlider blue;
-
-GWindow screen;
-//float x1 = 300;
-  //float y1 = 300;
-  //float r1 = 100;
-  
-  //stroke(255);
-  //strokeWeight(2);
-  //noFill();
-  //ellipse(x1, y1, r1*2, r1*2);
-  
-  //float r2 = r1 * 0.5; //r divides by 2
-  //float rsum = r1 + r2;
-  //float x2 = x1 + rsum * cos(angle);
-  //float y2 = y1 + rsum * sin(angle);
-  //ellipse(x2, y2, r2*2, r2*2);

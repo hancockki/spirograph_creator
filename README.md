@@ -7,3 +7,7 @@ The user is kept engaged by all of the various elements they can manipulate. The
 - The percent decrease of each inner circle from it's parent. Each spirograph has a radius that is a fixed percentage smaller than its parents. The user controls this percentage, but it is initialized to 1/3, meaning each inner circle has a radius 1/3 of the parent. To change this value, the user simply clears the current drawing and a new one will appear with a random percentage.
 - The number of layers in the drawing. This is basically just the thickness of the spirograph's path; having a thicker path gives the drawing the sense of being 3D
 - The spirograph's colors. There are sliders to manipulate the amount of red, green, and blue in each one.
+- The number of spirographs on the screen. The user simply clicks the screen where they want a new spirograph to appear. This new spirograph will have the same speed, number of circles, and percent decrease in circle size, but the radius of the new circle will be randomized.
+
+## Other elements the user can manipulate
+The user also has control of other aspects of the drawing.

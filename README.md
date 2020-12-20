@@ -25,7 +25,7 @@ What made me want to do a project about spirographs specifically is twofold. Fir
 3. Every element has an inverse
 4. The group has an identity element (if our identity is I then for any element A, I * A + A * I + A)
 
-Why am I going through this? Well, as it turns out spirographs are actually a group! I read [this paper](https://scholarship.claremont.edu/cgi/viewcontent.cgi?referer=https://www.google.com/&httpsredir=1&article=1328&context=hmnj#:~:text=In%20a%20spirograph%20set%2C%20each,to%20the%20number%20of%20teeth.) at the start of this project to get a refresher on the mathematics behind spirographs.
+Why am I going through this? Well, as it turns out spirographs are actually a group! I read [this paper](https://scholarship.claremont.edu/cgi/viewcontent.cgi?referer=https://www.google.com/&httpsredir=1&article=1328&context=hmnj#:~:text=In%20a%20spirograph%20set%2C%20each,to%20the%20number%20of%20teeth.) at the start of this project to get a refresher on the mathematics behind spirographs. Basically, they are a symmetric group because they have rotational and reflective symmetry. For more about symmetry and group theory, I also found [this page](http://www.ics.uci.edu/~eppstein/junkyard/sym.html) useful.
 
 At least 1 paragraph that explains how the system is personally meaningful to you.
 At least 1 paragraph that explains how working on this system challenged you as a computer scientist. How did you push yourself outside of your comfort zone? Why was this an important challenge for you? What are the next steps for you going forward?

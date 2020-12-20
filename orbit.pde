@@ -21,9 +21,10 @@ class Circle {
   Circle child; //child circle
   float speed; //keep track of speed and angle
   float angle;
+  float factor;
  
   /* circle constructor. initialize all class attributes */
-  Circle(float x_, float y_, float r_, int n_, Circle p) {
+  Circle(float x_, float y_, float r_, int n_, Circle p, float factor_) {
     x = x_;
     y = y_;
     r = r_;
@@ -32,6 +33,10 @@ class Circle {
     child = null;
     angle = 65;
     speed = radians(pow(k,n-1));
+    factor = factor_;
+    //float base = (float)(Math.random() * (4 - 1 + 1) + 1);
+    //factor = rand.nextFloat() + base;
+
   }
   
   /* 
@@ -39,7 +44,7 @@ class Circle {
   Called for the outermost circle which has no parent circle.
   */
   Circle(float x_, float y_, float r_, int n_) {
-    this(x_,y_,r_,n_, null);
+    this(x_,y_,r_,n_, null,null);
   }
   
   /* Show the circle */
@@ -80,7 +85,7 @@ class Circle {
       child --> the child Circle object of the current Circle
   */
   Circle addChild() {
-    float newr = r / 3.3;
+    float newr = r / factor;
     float newx = x + r - newr;
     float newy = y + r - newr;
     child = new Circle(newx,newy,newr, n+1, this);

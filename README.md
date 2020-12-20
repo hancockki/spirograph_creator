@@ -15,3 +15,17 @@ The user also has control of other aspects of the drawing. They have the ability
 - If the user presses 's' it stops the spirograph and hides the circles. This is very similar to pressing 'p', but the big difference here is that all we are doing is hiding the circles instead of actually stopping the entire drawing process. This is useful if the user wants to see that the drawing looks like without the white circles. They simply press 's' again to start the drawing and make the circles reappear.
 - If the user presses 'c' it clears the current spirograph. A new one is created when the user clicks the screen again, with a random radius but the same 
 - If the user presses 'p' or 's' and then clicks the screen, then finally presses 'p' or 's' again, it will **erase** the current spiral and start another one with the **same radius and percentage decrease in circle size**. The benefit of this is that if the user likes the current shape of the spirograph but simply wants it in a new location, they can do that.
+
+## Why this project
+I have always been fascinated by fractals and geometrical patterns; in my 8th grade geometry class we had tables that were entirely whiteboards. I would enter my own world during class of drawing elaborate fractal designs all over the surface, hoping my teacher wouldn't notice (they did). I am not sure what it is about fractal designs I've always loved, but it has seeped into an interest in Islamic art and architecture, which uses lots of properties of fractals.
+
+What made me want to do a project about spirographs specifically is twofold. First, I simply had a lot of fun with them as a child. Second, I took Group Theory last year, which professor Taback would always summarize as the study of the symmetrical properties of mathematical objects. A group is super abstract, but basically is anything set of objects under an operation that has:
+1. Closure (when you perform the operation on two elements of the group the resulting element is also in the group)
+2. Associativity (if * is our operation then A*(B * C) = (A * B) * C
+3. Every element has an inverse
+4. The group has an identity element (if our identity is I then for any element A, I * A + A * I + A)
+
+Why am I going through this? Well, as it turns out spirographs are actually a group!
+
+At least 1 paragraph that explains how the system is personally meaningful to you.
+At least 1 paragraph that explains how working on this system challenged you as a computer scientist. How did you push yourself outside of your comfort zone? Why was this an important challenge for you? What are the next steps for you going forward?

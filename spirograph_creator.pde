@@ -38,7 +38,7 @@ void setup() {
   
   //add first path to list and create first spirograph!
   paths.add(path);
-  createCircle(305,305,100);
+  createCircle(305,305,100, 3);
 }
 
 /*
@@ -69,9 +69,9 @@ number of child circles. Each circle is a Spirograph Object.
     yCoord -> y coordinate of the outer circle to be made
     radius --> the radius of the outer circle to be made
 */
-void createCircle(float xCoord, float yCoord, float radius) {
+void createCircle(float xCoord, float yCoord, float radius, float factor) {
   //create outer-most circle
-  outer = new Circle(xCoord, yCoord,radius, 1);
+  outer = new Circle(xCoord, yCoord,radius, 1, factor);
   //create the specified number of children; update current circle
   Circle current = outer;
   for (int i = 0; i < numCircles; i++) {

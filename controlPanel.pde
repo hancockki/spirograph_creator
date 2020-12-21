@@ -18,16 +18,16 @@ public void createGUI() {
   decreaseSpeed = new GButton(screen, 386,640,183,60, "Click me to decrease the speed");
   
   //a slider for each primary color
-  implementSliders(red, 4.0, 100,400, redAmount);
-  implementSliders(green, 5.0, 200,400, greenAmount);
-  implementSliders(blue, 6.0, 300, 400, blueAmount);
+  implementSliders(red, 4.0, 150, 450, redAmount);
+  implementSliders(green, 5.0, 250, 450, greenAmount);
+  implementSliders(blue, 6.0, 350, 450, blueAmount);
   
   //add slider labels
-  redLabel = new GLabel(screen, 110,375,100,30, "Red Slider");
+  redLabel = new GLabel(screen, 160,415,100,50, "Red Slider");
   redLabel.setLocalColorScheme(GCScheme.RED_SCHEME);
-  greenLabel = new GLabel(screen, 220,375,100,30, "Green Slider");
+  greenLabel = new GLabel(screen, 260,415,100,50, "Green Slider");
   greenLabel.setLocalColorScheme(GCScheme.GREEN_SCHEME);
-  blueLabel = new GLabel(screen, 330,375,100,30, "Blue Slider");
+  blueLabel = new GLabel(screen, 360,415,100,50, "Blue Slider");
   blueLabel.setLocalColorScheme(GCScheme.BLUE_SCHEME);
   
   //print description of how to use applet
@@ -38,7 +38,7 @@ public void createGUI() {
   "to control these aspects of the spirograph. \n Drag each slider to manipulate how much of each color is shown. \n In addition to the buttons, you can " +
   "also do the following: \n \n --> Click anywhere on the screen to start a new spirograph \n \n --> Press 'p' to pause the drawing, and then 'p'" +
   "again to restart \n \n --> Press 'c' to clear" +
-  "the current spirograph and start again in the same location \n \n --> Press 's' to pause the drawing and hide the spirograph circles. Press" +
+  " the most recently drawn spirograph and then click the screen to create another one \n \n --> Press 's' to pause the drawing and hide the spirograph circles. Press" +
   "'s' again to restart \n \n --> If you press 'p' or 's' before clicking the screen to start a new spirograph, the current spirograph will" +
   "be erased. This can be used if you do not like the positioning of the last spirograph you created");
 }
@@ -64,7 +64,7 @@ void handleButtonEvents(GButton button, GEvent event) {
     println("clicked button");
     numCircles += 1;
     path.clear();
-    createCircle(outer.x,outer.y, outer.r);
+    createCircle(outer.x,outer.y, outer.r, outer.factor);
   }
   if (button == increaseLayers && event == GEvent.CLICKED) {
     numLayers += 5;
@@ -77,7 +77,7 @@ void handleButtonEvents(GButton button, GEvent event) {
   if (button == decreaseCircles && event == GEvent.CLICKED) {
     numCircles -= 1;
     path.clear();
-    createCircle(outer.x,outer.y, outer.r);
+    createCircle(outer.x,outer.y, outer.r, outer.factor);
   }
   if (button == decreaseLayers && event == GEvent.CLICKED) {
     numLayers -= 5;
@@ -95,14 +95,23 @@ of paths.
 */
 void mouseReleased() {
   //get mouse x,y coordinates
-  if (stop || paused) {
+  float radius;
+  float factor;
+  if (stop) {
      path.clear();
+     radius = outer.r;
+     factor = end.factor;
+  } else if (paused){
+     radius = outer.r;
+     factor = end.factor;
+  } else {
+     radius = (int)(Math.random() * (180 - 30 + 1) + 20);
+     factor = (float)(Math.random() * (4 - 1 + 1) + 1)+rand.nextFloat();
   }
   end.x = mouseX;
   end.y = mouseY;
   path = new ArrayList<PVector>(); //reassign path list
-  int radius = (int)(Math.random() * (100 - 20 + 1) + 20);
-  createCircle(mouseX, mouseY, radius); //create next Circle
+  createCircle(mouseX, mouseY, radius, factor); //create next Circle
   //add path to paths list
   paths.add(path);
 }
@@ -158,9 +167,16 @@ void keyPressed() {
   //clear current circle
   if (key == 'c') {
     println('c');
-    path.clear();
-    createCircle(outer.x,outer.y, outer.r);
-
+    int index = paths.size()-1;
+    if (index >= 0) {
+      paths.remove(index);
+    } else {
+        createCircle(outer.x,outer.y, outer.r, outer.factor);
+    }
+  }
+  //save image
+  if (key == 'i') {
+    save("spirograph.png");
   }
 }
 

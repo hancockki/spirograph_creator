@@ -39,3 +39,10 @@ Going forward, I hope to continue working on dynamically updating content based 
 These are not bugs that will stop the program, but rather aspects of the user interaction that might yield some unwanted results.
 - adding many layers will cause the program to become quite slow after adding a few spirographs. This is simply because the data structure used is an Array List of Array Lists, where each spirograph path is an array list of points and we keep track of every spirograph.
 - based on how the *paused* and *stop* booleans are coded, if the user clicks *stop* and then *pause* before clicking *stop* again, they might lose the entire drawing. this is because clicking p calls noLoop() and clicking p again calls loop() to restart it, while clicking s just doesn't show the circles and stops the circles from rotating. If both are called, we will not see the circles or the path, and the user might be confused as to how to start the spirograph again. I played around with this a lot to try and catch any actual errors in the code, but never got anything that actually caused it to crash. I just fitgeted with pressing s and p until it came back on.
+
+## Works Cited
+- I used lots of [processing documentation](https://processing.org/reference/)
+- I used [this documentation](http://www.lagers.org.uk/g4p/ref/classg4p__controls_1_1_g_window.html) for learning about G4P 
+- I read about fractals and processing [here](https://natureofcode.com/book/chapter-8-fractals/)
+- To supplement the documentation for G4P, I used some stack exchange/processing forums, such as [this one](https://stackoverflow.com/questions/19625334/range-slider-event-handler-javascript) and [this one](https://forum.processing.org/two/discussion/12272/multiple-windows-with-processing-3)
+- I nerded out on plenty of spirograph mathematics videos, like [this one](https://spirographicart.holmpage.net/2014/08/10/deriving-mathematical-formula-pattern-made-spirograph-gear/) and [this (called Mathematische Basteleien)](http://www.mathematische-basteleien.de/spirographs.htm)

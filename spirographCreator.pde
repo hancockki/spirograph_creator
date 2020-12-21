@@ -1,19 +1,37 @@
+/*
+Welcome to the Spiraling Spirograph Scene!
+
+This processing program is a unique, user-friendly applet that allows you to
+explore the fun world of spirographs! Spirographs are based off of different mathematical
+ratios between outer and inner circles, as well as the speed in which the spirograph is traced.
+The user is able to create their own spirograph design with a few simple tools, filling the page
+with fun and unique shapes. Each spirograph is composed of Circle objects, where each Circle object has a 
+parent and a child Circle (except the outer circle which has no parent and the inner most circle which
+has no child). We make these circles 'on top of' one another and then rotate them at different speeds based on
+an inital speed. Each inner circle spins faster than its parent.
+
+I basically just played around with the different ratios of speed and radius and number of circles, because
+really I wanted to create something where the user could determine for themselves what speed and circle ratios
+they like the shape of best.
+
+This script is the driver for the whole program. It creates an initial Circle object and continuously
+draws the path of the objects.
+
+12/20/2020
+@author: Kim Hancock
+CSCI 3725: Computational Creativity
+Bowdoin College
+*/
+
 import g4p_controls.*;
 import java.util.Random;
 
-// the below lines initialize data structures to store each point in the path
-ArrayList<PVector> path;
-ArrayList<ArrayList<PVector>> paths;
+// we initialize the current path (which will be updated as the user creates new spirographs
+Path currentPath;
+//initialize list of Path objects to track the path of each spirograph the user creates.
+ArrayList<Path> paths;
 
-//used to pause and stop drawing
-boolean paused = false;
-boolean stop = false;
-
-//initialize amount of each color
-int redAmount = 255;
-int greenAmount = 0;
-int blueAmount = 50;
-//initialize our outer, current, and end circles
+///initialize the outer, end, and current circles which is updated as the user creates new spirographs
 Circle outer;
 Circle end;
 Circle current;
@@ -33,11 +51,9 @@ void setup() {
   createGUI();
   
   //initialize our path vector lists
-  path = new ArrayList<PVector>();
-  paths = new ArrayList<ArrayList<PVector>>();
-  
-  //add first path to list and create first spirograph!
-  paths.add(path);
+  currentPath = new Path(255,0,50);
+  paths = new ArrayList<Path>();
+  paths.add(currentPath);
   createCircle(305,305,100, 3);
 }
 
@@ -57,7 +73,7 @@ void draw(){
     }
     current = current.child; //reassign current to next circle
   }
-  drawPath(path); //draw the path of the orbit! 
+  drawPath(currentPath.points); //draw the path of the orbit! 
 }
 
 /*
@@ -96,14 +112,14 @@ void drawPath(ArrayList<PVector> path) {
     path.add(new PVector(end.x,end.y)); //add the vectors to path
   }
   //draw each spirograph
-  for (ArrayList<PVector> currentpath : paths) {
+  for (Path currentpath : paths) {
     for (int i = 0; i < numLayers; i+=1) {
       // draw new outline
       beginShape();
       //update colors to create a rainbow affect the user can manipulate
-      stroke(redAmount-(i*12),greenAmount+(i*5),blueAmount+(i*5),200-(i*2)); 
+      stroke(currentpath.redAmount-(i*12),currentpath.greenAmount+(i*5),currentpath.blueAmount+(i*5),200-(i*2)); 
       //draw each vertex in the list
-      for (PVector pos : currentpath) {
+      for (PVector pos : currentpath.points) {
         vertex(pos.x+(0.5*i), pos.y+(0.5*i));
       }
     endShape();

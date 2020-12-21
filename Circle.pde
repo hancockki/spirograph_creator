@@ -3,6 +3,13 @@ This script houses the Circle class. A Circle object is created for every
 circle of each spirograph. Circle objects have (x,y) coordinates, parent and child circles
 (which may be null if it's the outer or inner circle), angle/speed for rotation, and 
 a 'level', n (this level controls the speed, as each circle gets faster).
+
+The angle is updated continuously when the spirograph is created, since we rotate around the outer circle.
+We do this by continuously adding to the angle (Which is in radians).
+
+The other attribute that needs a bit of an explanation is factor, which is essentially the factor which
+we divide the radius of each new circle by. So, if factor=2 and we start with radius=12, then the second 
+circle will have radius 6, the third radius 3, etc.
 */
 
 //public variable for the base speed, same for every spirograph.
@@ -20,8 +27,8 @@ class Circle {
   Circle parent; //parent circle
   Circle child; //child circle
   float speed; //keep track of speed and angle
-  float angle;
-  float factor;
+  float angle; //angle we are taking the sine/cosine of to rotate the circle.
+  float factor; //this is the factor by which we divide the radius of the circle when creating child circles.
 
   /* circle constructor. initialize all class attributes */
   Circle(float x_, float y_, float r_, int n_, float factor_, Circle p) {
@@ -30,17 +37,10 @@ class Circle {
     r = r_;
     n = n_;
     parent = p;
-    child = null;
-    angle = 65;
-    speed = radians(pow(k,n-1));
+    child = null; //we reassign this when we make the child Circle
+    angle = 65; //this is arbitrary but I picked 65 to make the spirals centered.
+    speed = radians(pow(k,n-1)); //a higher value of k will make the speed faster.
     factor = factor_;
-  }
-  
-  /* 
-  Alternative circle constructor for when there is no factor given.
-  */
-  Circle(float x_, float y_, float r_, int n_) {
-    this(x_,y_,r_, n_, (float)(Math.random() * (4 - 1 + 1) + 1)+rand.nextFloat(), null);
   }
   
   /* 
@@ -95,12 +95,4 @@ class Circle {
     child = new Circle(newx, newy, newr, n+1, this.factor, this);
     return child;
   }
-  
-  void stop() {
-    x = 0;
-    y = 0;
-    speed = 0;
-    angle = 0;
-  }
-  
 }

@@ -1,15 +1,26 @@
 /*
-This script is where all of the user interactions are controlled.
-Includes buttons, keys pressed, and color control. All b
+This script is where we set up the control panel. This includes buttons, sliders, and the text
+on screen.
+
+We have buttons to allow the user to increase/decrease the number of circles, speed, and number of layers
+of the spirograph being traced.
 */
 
+//used to pause and stop drawing. initialized to false and become true upon the appropriate keyboard clicks
+boolean paused = false;
+boolean stop = false;
+
+/*
+Create the window that the user interacts with.
+Initialize all of the button, slider, and slider label variables, as well as the control panel description.
+*/
 public void createGUI() {
   //add second window for control of elements
   screen = GWindow.getWindow(this, "Control Panel", 300,300,600,700,P2D);
   G4P.setGlobalColorScheme(GCScheme.CYAN_SCHEME);
   screen.addDrawHandler(this, "windowDraw");
   
-  //simple buttons
+  //implement buttons
   increaseCircles = new GButton(screen, 20,580,183, 60,"Click me to increase the number of circles");
   increaseLayers = new GButton(screen, 203,580,183,60, "Click me to increase the number of layers");
   increaseSpeed = new GButton(screen, 386,580,183,60, "Click me to increase the speed");
@@ -17,10 +28,10 @@ public void createGUI() {
   decreaseLayers = new GButton(screen, 203,640,183,60, "Click me to decrease the number of layers");
   decreaseSpeed = new GButton(screen, 386,640,183,60, "Click me to decrease the speed");
   
-  //a slider for each primary color
-  implementSliders(red, 4.0, 150, 450, redAmount);
-  implementSliders(green, 5.0, 250, 450, greenAmount);
-  implementSliders(blue, 6.0, 350, 450, blueAmount);
+  //initialize a slider for each primary color by calling initializeSlider method
+  implementSliders(red, 4.0, 150, 450, 255);
+  implementSliders(green, 5.0, 250, 450, 0);
+  implementSliders(blue, 6.0, 350, 450, 50);
   
   //add slider labels
   redLabel = new GLabel(screen, 160,415,100,50, "Red Slider");
@@ -31,16 +42,18 @@ public void createGUI() {
   blueLabel.setLocalColorScheme(GCScheme.BLUE_SCHEME);
   
   //print description of how to use applet
-  description = new GLabel(screen, 20,0,580,400, "Welcome to this applet!\n This allows you to create" +
+  description = new GLabel(screen, 20,0,580,450, "Welcome to this applet!\n This allows you to create" +
   " your own spirograph design. Play around with different elements of the spirograph. These elements are: \n \n" +
-  "\n 1) the number of circles \n \n 2) the speed the spirograph rotates \n \n 3) the number of layers drawn (how thick" +
-  " it is) \n \n 4) the color of the path \n \n 5) The number of spirographs on the screen \n \n Click each of the buttons below" +
-  "to control these aspects of the spirograph. \n Drag each slider to manipulate how much of each color is shown. \n In addition to the buttons, you can " +
-  "also do the following: \n \n --> Click anywhere on the screen to start a new spirograph \n \n --> Press 'p' to pause the drawing, and then 'p'" +
-  "again to restart \n \n --> Press 'c' to clear" +
+  "\n 1) the number of circles \n 2) the speed the spirograph rotates \n 3) the number of layers drawn (how thick" +
+  " it is) \n 4) the color of the path \n 5) The number of spirographs on the screen \n 6) The difference in size between each circle and it's" +
+  " child circle. \n \n Click each of the buttons below to control these aspects of the spirograph. \n Drag each slider to manipulate how much of each color" +
+  " is shown. \n In addition to the buttons and slider, you can also do the following: \n \n --> Click anywhere on the screen to start a new spirograph with random size and circle ratio \n \n --> Press 'p'" +
+  " to pause the drawing, and then 'p' again to restart \n \n --> Press 'c' to clear" +
   " the most recently drawn spirograph and then click the screen to create another one \n \n --> Press 's' to pause the drawing and hide the spirograph circles. Press" +
-  "'s' again to restart \n \n --> If you press 'p' or 's' before clicking the screen to start a new spirograph, the current spirograph will" +
-  "be erased. This can be used if you do not like the positioning of the last spirograph you created");
+  "'s' again to restart \n \n --> If you press 's' before clicking the screen to start a new spirograph, the current spirograph will" +
+  " be erased. Upon clicking, an identical spirograph will be made where you click. This can be used if you do not like the positioning of the last spirograph you created \n \n " +
+  "--> If you press 'p' before clicking, the current spirograph will remain and when you click, a new one will appear with the same shape but different size. This is useful for layering spirals" +
+  "of the same shape");
 }
 
 /* initialize our control panel window */
@@ -63,57 +76,29 @@ void handleButtonEvents(GButton button, GEvent event) {
   if (button == increaseCircles && event == GEvent.CLICKED) {
     println("clicked button");
     numCircles += 1;
-    path.clear();
+    currentPath.points.clear();
     createCircle(outer.x,outer.y, outer.r, outer.factor);
   }
   if (button == increaseLayers && event == GEvent.CLICKED) {
     numLayers += 5;
   }
   if (button == increaseSpeed && event == GEvent.CLICKED) {
-    path.clear();
+    currentPath.points.clear();
     k -= 1;
   }
   //DECREASE VALUES
   if (button == decreaseCircles && event == GEvent.CLICKED) {
     numCircles -= 1;
-    path.clear();
+    currentPath.points.clear();
     createCircle(outer.x,outer.y, outer.r, outer.factor);
   }
   if (button == decreaseLayers && event == GEvent.CLICKED) {
     numLayers -= 5;
   }
   if (button == decreaseSpeed && event == GEvent.CLICKED) {
-    path.clear();
+    currentPath.points.clear();
     k += 1;
   }
-}
-
-/* 
-Create a new spirograph every time the user clicks in the window. 
-Creates a new array list for the path of the new spirograph and adds it to the list
-of paths.
-*/
-void mouseReleased() {
-  //get mouse x,y coordinates
-  float radius;
-  float factor;
-  if (stop) {
-     path.clear();
-     radius = outer.r;
-     factor = end.factor;
-  } else if (paused){
-     radius = outer.r;
-     factor = end.factor;
-  } else {
-     radius = (int)(Math.random() * (180 - 30 + 1) + 20);
-     factor = (float)(Math.random() * (4 - 1 + 1) + 1)+rand.nextFloat();
-  }
-  end.x = mouseX;
-  end.y = mouseY;
-  path = new ArrayList<PVector>(); //reassign path list
-  createCircle(mouseX, mouseY, radius, factor); //create next Circle
-  //add path to paths list
-  paths.add(path);
 }
 
 /*
@@ -129,54 +114,14 @@ way to tell which slider was which).
 void handleSliderEvents(GValueControl slider, GEvent event) {
   //decide which slider it is and change color value accordingly
   if (slider.getEasing() == 4.0) {
-    redAmount = slider.getValueI();
+    currentPath.redAmount = slider.getValueI();
     println(slider.getEasing());
   }
   if (slider.getEasing() == 5.0) {
-    greenAmount = slider.getValueI();
+    currentPath.greenAmount = slider.getValueI();
   }
   if (slider.getEasing() == 6.0) {
-    blueAmount = slider.getValueI();
-  }
-}
-
-/*
-Control what happens when the user clicks various stop/start the spirograph from moving.
-Press 'p' to pause/play the drawing
-Press 's' to pause/play the drawing and hide the white circles
-Press 'c' to clear the current spirograph and restart in the same place.
-*/
-void keyPressed() {
-  //pause/play drawing
-  if ( key == 'p' ) {
-    paused = !paused;
-    if (paused) {
-      noLoop();
-    } else {
-      loop();
-    }
-  }
-  //stop the drawing AND hide the white circles
-  if (key == 's') {
-    if (stop == true) {
-      stop = false;
-    } else {
-      stop = true;
-    }
-  }
-  //clear current circle
-  if (key == 'c') {
-    println('c');
-    int index = paths.size()-1;
-    if (index >= 0) {
-      paths.remove(index);
-    } else {
-        createCircle(outer.x,outer.y, outer.r, outer.factor);
-    }
-  }
-  //save image
-  if (key == 'i') {
-    save("spirograph.png");
+    currentPath.blueAmount = slider.getValueI();
   }
 }
 

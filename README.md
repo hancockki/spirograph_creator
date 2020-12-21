@@ -45,4 +45,4 @@ These are not bugs that will stop the program, but rather aspects of the user in
 - I used [this documentation](http://www.lagers.org.uk/g4p/ref/classg4p__controls_1_1_g_window.html) for learning about G4P 
 - I read about fractals and processing [here](https://natureofcode.com/book/chapter-8-fractals/)
 - To supplement the documentation for G4P, I used some stack exchange/processing forums, such as [this one](https://stackoverflow.com/questions/19625334/range-slider-event-handler-javascript) and [this one](https://forum.processing.org/two/discussion/12272/multiple-windows-with-processing-3)
-- I nerded out on plenty of spirograph mathematics videos, like [this one](https://spirographicart.holmpage.net/2014/08/10/deriving-mathematical-formula-pattern-made-spirograph-gear/) and [this (called Mathematische Basteleien)](http://www.mathematische-basteleien.de/spirographs.htm)
+- I nerded out on plenty of spirograph mathematics videos/pages, like [this one](https://spirographicart.holmpage.net/2014/08/10/deriving-mathematical-formula-pattern-made-spirograph-gear/) and [this (called Mathematische Basteleien)](http://www.mathematische-basteleien.de/spirographs.htm)
